@@ -1,4 +1,4 @@
-package com.phuocngo.identity_service.dto.request;
+package com.phuocngo.identity_service.dto.response;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -7,12 +7,10 @@ import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
 
-@Setter
 @Getter
+@Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserUpdate {
-    String password;
+public class UserResponse {
     String fullName;
     LocalDate dob;
-
 }

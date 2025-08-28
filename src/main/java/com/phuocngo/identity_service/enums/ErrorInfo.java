@@ -1,5 +1,8 @@
 package com.phuocngo.identity_service.enums;
 
+import lombok.Getter;
+
+@Getter
 public enum ErrorInfo {
     UNCATEGORIZED_ERROR(9999, "Uncategorized error."),
     USER_EXISTED(1001, "User has been existed."),
@@ -12,13 +15,5 @@ public enum ErrorInfo {
     ErrorInfo(int code, String message) {
         this.message = message;
         this.code = code;
-    }
-
-    public int getCode() {
-        return code;
-    }
-
-    public String getMessage() {
-        return message;
     }
 }
