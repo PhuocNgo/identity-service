@@ -23,45 +23,51 @@ public class UserController {
 
     @PostMapping
     public ApiResponse<UserResponse> createUser(@RequestBody @Valid UserCreation userCreation) {
-        ApiResponse<UserResponse> apiResponse = new ApiResponse<>();
-        apiResponse.setCode(SuccessInfo.CREATED_USER.getCode());
-        apiResponse.setMessage(SuccessInfo.CREATED_USER.getMessage());
-        apiResponse.setResult(userService.createUser(userCreation));
-        return apiResponse;
+
+        return ApiResponse.<UserResponse>builder()
+                .code(SuccessInfo.CREATED_USER.getCode())
+                .result(userService.createUser(userCreation))
+                .message(SuccessInfo.CREATED_USER.getMessage())
+                .build();
     }
 
     @GetMapping
     public ApiResponse<List<UserResponse>> getUsers() {
-        ApiResponse<List<UserResponse>> apiResponse = new ApiResponse<>();
-        apiResponse.setCode(SuccessInfo.GET_ALL_USERS.getCode());
-        apiResponse.setMessage(SuccessInfo.GET_ALL_USERS.getMessage());
-        apiResponse.setResult(userService.getUsers());
-        return apiResponse;
+
+        return ApiResponse.<List<UserResponse>>builder()
+                .code(SuccessInfo.GET_ALL_USERS.getCode())
+                .message(SuccessInfo.GET_ALL_USERS.getMessage())
+                .result(userService.getUsers())
+                .build();
     }
 
     @GetMapping("/{userId}")
     public ApiResponse<UserResponse> getUser(@PathVariable String userId) {
-        ApiResponse<UserResponse> apiResponse = new ApiResponse<>();
-        apiResponse.setResult(userService.findUser(userId));
-        apiResponse.setMessage(SuccessInfo.GET_USER_BY_ID.getMessage());
-        apiResponse.setCode(SuccessInfo.GET_USER_BY_ID.getCode());
-        return apiResponse;
+
+        return ApiResponse.<UserResponse>builder()
+                .code(SuccessInfo.GET_USER_BY_ID.getCode())
+                .message(SuccessInfo.GET_USER_BY_ID.getMessage())
+                .result(userService.findUser(userId))
+                .build();
     }
 
     @PutMapping("/{userId}")
     public ApiResponse<UserResponse> updateUser(@PathVariable String userId, @RequestBody UserUpdate userUpdate) {
-        ApiResponse<UserResponse> apiResponse = new ApiResponse<>();
-        apiResponse.setResult(userService.updateUser(userId, userUpdate));
-        apiResponse.setCode(SuccessInfo.UPDATE_USER_BY_ID.getCode());
-        apiResponse.setMessage(SuccessInfo.UPDATE_USER_BY_ID.getMessage());
-        return apiResponse;
+
+        return ApiResponse.<UserResponse>builder()
+                .code(SuccessInfo.UPDATE_USER_BY_ID.getCode())
+                .result(userService.updateUser(userId, userUpdate))
+                .message(SuccessInfo.UPDATE_USER_BY_ID.getMessage())
+                .build();
     }
 
-    @DeleteMapping("{userId}")
+    @DeleteMapping("/{userId}")
     public ApiResponse<String> deleteUser(@PathVariable String userId) {
-        ApiResponse<String> apiResponse = new ApiResponse<>();
-        apiResponse.setMessage(userService.deleteUser(userId));
-        apiResponse.setCode(SuccessInfo.DELETE_USER_BY_ID.getCode());
-        return apiResponse;
+
+        return ApiResponse.<String>builder()
+                .result(userService.deleteUser(userId))
+                .message(SuccessInfo.DELETE_USER_BY_ID.getMessage())
+                .code(SuccessInfo.DELETE_USER_BY_ID.getCode())
+                .build();
     }
 }

@@ -1,18 +1,18 @@
-package com.phuocngo.identity_service.dto.response;
+package com.phuocngo.identity_service.dto.payload;
 
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
-import java.time.LocalDate;
-
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserResponse {
-    String id;
+public class UserPayload {
     String username;
-    String fullName;
-    LocalDate dob;
+    String id;
+
+    public String toString() {
+        return "username:" + username + "id:" + id;
+    }
 }

@@ -11,7 +11,8 @@ public enum SuccessInfo {
     GET_ALL_USERS(2002, "All users has been queried."),
     GET_USER_BY_ID(2003, "User has been queried by id."),
     UPDATE_USER_BY_ID(2004, "User has been updated."),
-    DELETE_USER_BY_ID(2005, "User has been deleted.")
+    DELETE_USER_BY_ID(2005, "User has been deleted."),
+    AUTHENTICATED(2006, "Your token is valid.")
     ;
 
     final int code;

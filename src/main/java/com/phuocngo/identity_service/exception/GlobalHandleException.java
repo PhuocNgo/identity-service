@@ -12,34 +12,39 @@ public class GlobalHandleException {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse> handleException() {
-        ApiResponse apiResponse = new ApiResponse();
-        apiResponse.setCode(ErrorInfo.UNCATEGORIZED_ERROR.getCode());
-        apiResponse.setMessage(ErrorInfo.UNCATEGORIZED_ERROR.getMessage());
+        ApiResponse apiResponse = ApiResponse.builder()
+                .code(ErrorInfo.UNCATEGORIZED_ERROR.getCode())
+                .message(ErrorInfo.UNCATEGORIZED_ERROR.getMessage())
+                .build();
         return ResponseEntity.badRequest().body(apiResponse);
     }
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ApiResponse> handleRuntimeException(RuntimeException runtimeException) {
-        ApiResponse apiResponse = new ApiResponse();
-        apiResponse.setCode(1001);
-        apiResponse.setMessage(runtimeException.getMessage());
+        ApiResponse apiResponse = ApiResponse.builder()
+                .code(1001)
+                .message(runtimeException.getMessage())
+                .build();
         return ResponseEntity.badRequest().body(apiResponse);
     }
 
     @ExceptionHandler(UserException.class)
     public ResponseEntity<ApiResponse> handleUserException(UserException userException) {
-        ApiResponse apiResponse = new ApiResponse();
-        apiResponse.setCode(userException.getErrorInfo().getCode());
-        apiResponse.setMessage(userException.getErrorInfo().getMessage());
+        ApiResponse apiResponse = ApiResponse.builder()
+                .code(userException.getErrorInfo().getCode())
+                .message(userException.getErrorInfo().getMessage())
+                .build();
         return ResponseEntity.badRequest().body(apiResponse);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse> handleValidateException(MethodArgumentNotValidException methodArgumentNotValidException) {
-        ApiResponse apiResponse = new ApiResponse();
         ErrorInfo errorInfo = ErrorInfo.valueOf(methodArgumentNotValidException.getFieldError().getDefaultMessage());
-        apiResponse.setMessage(errorInfo.getMessage());
-        apiResponse.setCode(errorInfo.getCode());
+        ApiResponse apiResponse = ApiResponse.builder()
+                .message(errorInfo.getMessage())
+                .code(errorInfo.getCode())
+                .build();
+
         return ResponseEntity.badRequest().body(apiResponse);
     }
 }

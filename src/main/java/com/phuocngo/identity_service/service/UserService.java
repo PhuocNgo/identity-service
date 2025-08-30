@@ -11,6 +11,8 @@ import com.phuocngo.identity_service.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -27,7 +29,9 @@ public class UserService {
         if (userRepository.existsUserByUsername(userCreation.getUsername())) {
             throw new UserException(ErrorInfo.USER_EXISTED);
         }
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
 
+        userCreation.setPassword(passwordEncoder.encode(userCreation.getPassword()));
         User user = userMapper.toUser(userCreation);
 
         return userMapper.toUserResponse(userRepository.save(user));
