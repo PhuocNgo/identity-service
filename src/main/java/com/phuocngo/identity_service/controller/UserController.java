@@ -59,6 +59,18 @@ public class UserController {
                 .build());
   }
 
+  @GetMapping("/my-info")
+  public ResponseEntity<ApiResponse<UserResponse>> getMyInfo() {
+
+    return ResponseEntity.ok()
+        .body(
+            ApiResponse.<UserResponse>builder()
+                .code(SuccessInfo.GET_USER_BY_ID.getCode())
+                .message(SuccessInfo.GET_USER_BY_ID.getMessage())
+                .result(userService.getMyInfo())
+                .build());
+  }
+
   @PutMapping("/{userId}")
   public ResponseEntity<ApiResponse<UserResponse>> updateUser(
       @PathVariable String userId, @RequestBody UserUpdate userUpdate) {

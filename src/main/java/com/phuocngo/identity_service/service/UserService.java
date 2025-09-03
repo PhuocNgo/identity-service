@@ -16,6 +16,8 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -44,6 +46,7 @@ public class UserService {
     return userMapper.toUserResponse(userRepository.save(user));
   }
 
+  @PreAuthorize("hasRole('admin')")
   public List<UserResponse> getUsers() {
     List<User> users = userRepository.findAll();
     List<UserResponse> userResponses = new ArrayList<>();
@@ -63,12 +66,29 @@ public class UserService {
   }
 
   public UserResponse findUser(String id) {
-    User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("Not found"));
+    User user =
+        userRepository
+            .findById(id)
+            .orElseThrow(() -> new UserException(ErrorInfo.USER_NOT_EXISTED));
+    return userMapper.toUserResponse(user);
+  }
+
+  @PostAuthorize("returnObject.username == authentication.name")
+  public UserResponse getMyInfo() {
+    var account = SecurityContextHolder.getContext();
+    String username = account.getAuthentication().getName();
+    User user =
+        userRepository
+            .findByUsername(username)
+            .orElseThrow(() -> new RuntimeException("Not found"));
     return userMapper.toUserResponse(user);
   }
 
   public UserResponse updateUser(String id, UserUpdate userUpdate) {
-    User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("Not found"));
+    User user =
+        userRepository
+            .findById(id)
+            .orElseThrow(() -> new UserException(ErrorInfo.USER_NOT_EXISTED));
     user = userMapper.updateUser(user, userUpdate);
 
     return userMapper.toUserResponse(userRepository.save(user));

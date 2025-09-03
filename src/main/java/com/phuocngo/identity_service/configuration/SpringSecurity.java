@@ -1,11 +1,11 @@
 package com.phuocngo.identity_service.configuration;
 
-import com.phuocngo.identity_service.enums.Role;
 import javax.crypto.spec.SecretKeySpec;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -20,8 +20,9 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SpringSecurity {
-  private final String[] publicApiPaths = {"/users", "/auth/log-in"};
+  private final String[] publicApiPaths = {"/users", "/auth/log-in", "/auth/verify-token"};
 
   @Value("${jwt.signerKey}")
   private String signerKey;
@@ -34,8 +35,6 @@ public class SpringSecurity {
             authorize
                 .requestMatchers(HttpMethod.POST, publicApiPaths)
                 .permitAll()
-                .requestMatchers(HttpMethod.GET, "/users")
-                .hasRole(Role.ADMIN.getName())
                 .anyRequest()
                 .authenticated());
 
