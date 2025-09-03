@@ -1,18 +1,20 @@
 package com.phuocngo.identity_service.dto.response;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.FieldDefaults;
-
 import java.time.LocalDate;
+import java.util.Set;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserResponse {
-    String id;
-    String username;
-    String fullName;
-    LocalDate dob;
+  String id;
+  String username;
+  String fullName;
+  LocalDate dob;
+  Set<String> roles;
 }

@@ -9,6 +9,6 @@ import lombok.experimental.FieldDefaults;
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AuthRequest {
-    String username;
-    String password;
+  String username;
+  String password;
 }
