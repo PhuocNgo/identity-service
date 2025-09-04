@@ -46,7 +46,7 @@ public class AuthService {
             .orElseThrow(() -> new UserException(ErrorInfo.USER_NOT_EXISTED));
 
     if (!passwordEncoder.matches(rawPassword, user.getPassword()))
-      throw new UserException(ErrorInfo.UNAUTHENTICATED);
+      throw new UserException(ErrorInfo.UNSUCCESSFUL_LOGIN);
 
     String token = generateToken(user);
     return AuthResponse.builder().success(true).token(token).build();

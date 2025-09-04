@@ -1,10 +1,14 @@
 package com.phuocngo.identity_service.configuration;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.phuocngo.identity_service.dto.response.ApiResponse;
+import com.phuocngo.identity_service.enums.ErrorInfo;
 import javax.crypto.spec.SecretKeySpec;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -39,7 +43,26 @@ public class SpringSecurity {
                 .authenticated());
 
     httpSecurity.oauth2ResourceServer(
-        oAuth2ResourceServerConfigurer -> oAuth2ResourceServerConfigurer.jwt(jwtConfigurer -> {}));
+        oAuth2ResourceServerConfigurer -> {
+          oAuth2ResourceServerConfigurer.jwt(
+              jwtConfigurer -> {
+                jwtConfigurer.decoder(jwtDecoder());
+                jwtConfigurer.jwtAuthenticationConverter(jwtAuthenticationConverter());
+              });
+          oAuth2ResourceServerConfigurer.authenticationEntryPoint(
+              (request, response, authException) -> {
+                ObjectMapper objectMapper = new ObjectMapper();
+                ApiResponse<?> apiResponse =
+                    ApiResponse.builder()
+                        .code(ErrorInfo.UNAUTHENTICATED.getCode())
+                        .message(ErrorInfo.UNAUTHENTICATED.getMessage())
+                        .build();
+
+                response.setStatus(ErrorInfo.UNAUTHENTICATED.getStatusCode().value());
+                response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                response.getWriter().write(objectMapper.writeValueAsString(apiResponse));
+              });
+        });
 
     httpSecurity.csrf(AbstractHttpConfigurer::disable);
 
