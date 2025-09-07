@@ -5,13 +5,18 @@ import com.phuocngo.identity_service.dto.request.UserUpdate;
 import com.phuocngo.identity_service.dto.response.UserResponse;
 import com.phuocngo.identity_service.entity.User;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 
-@Mapper(componentModel = "spring")
+@Mapper(
+    componentModel = "spring",
+    nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface UserMapper {
   User toUser(UserCreation userCreation);
 
   UserResponse toUserResponse(User user);
 
-  User updateUser(@MappingTarget User user, UserUpdate userUpdate);
+  @Mapping(target = "roles", ignore = true)
+  void updateUser(@MappingTarget User user, UserUpdate userUpdate);
 }

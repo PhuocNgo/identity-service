@@ -1,9 +1,6 @@
 package com.phuocngo.identity_service.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.Set;
 import lombok.*;
@@ -25,5 +22,7 @@ public class User {
   String password;
   String fullName;
   LocalDate dob;
-  Set<String> roles;
+
+  @ManyToMany
+  Set<Role> roles;
 }

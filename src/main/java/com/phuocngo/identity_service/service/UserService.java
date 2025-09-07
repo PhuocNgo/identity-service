@@ -8,10 +8,11 @@ import com.phuocngo.identity_service.enums.ErrorInfo;
 import com.phuocngo.identity_service.enums.Role;
 import com.phuocngo.identity_service.exception.UserException;
 import com.phuocngo.identity_service.mapper.UserMapper;
+import com.phuocngo.identity_service.repository.RoleRepository;
 import com.phuocngo.identity_service.repository.UserRepository;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -31,6 +32,7 @@ public class UserService {
   UserRepository userRepository;
   UserMapper userMapper;
   PasswordEncoder passwordEncoder;
+  RoleRepository roleRepository;
 
   public UserResponse createUser(UserCreation userCreation) {
     if (userRepository.existsUserByUsername(userCreation.getUsername())) {
@@ -39,30 +41,25 @@ public class UserService {
 
     userCreation.setPassword(passwordEncoder.encode(userCreation.getPassword()));
     User user = userMapper.toUser(userCreation);
-    var roles = new HashSet<String>();
+    Set<String> roles = new HashSet<>();
     roles.add(Role.USER.getName());
-    user.setRoles(roles);
+
+    var rolesExisted = roleRepository.findAllById(roles);
+
+    user.setRoles(new HashSet<>(rolesExisted));
 
     return userMapper.toUserResponse(userRepository.save(user));
   }
 
-  @PreAuthorize("hasRole('admin')")
+  @PreAuthorize("hasRole('ADMIN')")
   public List<UserResponse> getUsers() {
     List<User> users = userRepository.findAll();
-    List<UserResponse> userResponses = new ArrayList<>();
 
     SecurityContext securityContext = SecurityContextHolder.getContext();
     var authentication = securityContext.getAuthentication();
     log.info("username: {}", authentication.getName());
 
-    var grantedAuthorities = authentication.getAuthorities();
-    grantedAuthorities.forEach(grantedAuthority -> log.info(grantedAuthority.getAuthority()));
-
-    for (User u : users) {
-      userResponses.add(userMapper.toUserResponse(u));
-    }
-
-    return userResponses;
+    return users.stream().map(userMapper::toUserResponse).toList();
   }
 
   public UserResponse findUser(String id) {
@@ -89,8 +86,19 @@ public class UserService {
         userRepository
             .findById(id)
             .orElseThrow(() -> new UserException(ErrorInfo.USER_NOT_EXISTED));
-    user = userMapper.updateUser(user, userUpdate);
 
+    String password = userUpdate.getPassword();
+    if (password != null) {
+      userUpdate.setPassword(passwordEncoder.encode(password));
+    }
+
+    userMapper.updateUser(user, userUpdate);
+
+    var rolesReq = userUpdate.getRoles();
+    if (rolesReq != null) {
+      var roles = roleRepository.findAllById(rolesReq);
+      user.setRoles(new HashSet<>(roles));
+    }
     return userMapper.toUserResponse(userRepository.save(user));
   }
 

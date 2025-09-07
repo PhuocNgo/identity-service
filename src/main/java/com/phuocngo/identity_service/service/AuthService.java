@@ -96,9 +96,14 @@ public class AuthService {
 
   private String roleBuilder(User user) {
     StringJoiner stringJoiner = new StringJoiner(" ");
+
     var roles = user.getRoles();
 
-    roles.forEach(stringJoiner::add);
+    roles.forEach(
+        role -> {
+          stringJoiner.add("ROLE_" + role.getName());
+          role.getPermissions().forEach(permission -> stringJoiner.add(permission.getName()));
+        });
     return stringJoiner.toString();
   }
 }

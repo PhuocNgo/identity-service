@@ -1,7 +1,5 @@
 package com.phuocngo.identity_service.dto.request;
 
-import java.time.LocalDate;
-import java.util.Set;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,9 +8,7 @@ import lombok.experimental.FieldDefaults;
 @Setter
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserUpdate {
-  String password;
-  String fullName;
-  LocalDate dob;
-  Set<String> roles;
+public class PermissionRequest {
+  String name;
+  String description;
 }

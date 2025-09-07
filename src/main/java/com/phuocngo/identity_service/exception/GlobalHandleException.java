@@ -13,11 +13,11 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class GlobalHandleException {
 
   @ExceptionHandler(Exception.class)
-  public ResponseEntity<ApiResponse<?>> handleException() {
+  public ResponseEntity<ApiResponse<?>> handleException(Exception e) {
     ApiResponse<?> apiResponse =
         ApiResponse.builder()
             .code(ErrorInfo.UNCATEGORIZED_ERROR.getCode())
-            .message(ErrorInfo.UNCATEGORIZED_ERROR.getMessage())
+            .message(e.getMessage())
             .build();
     return ResponseEntity.status(ErrorInfo.UNCATEGORIZED_ERROR.getStatusCode()).body(apiResponse);
   }

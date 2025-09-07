@@ -2,6 +2,7 @@ package com.phuocngo.identity_service.configuration;
 
 import com.phuocngo.identity_service.entity.User;
 import com.phuocngo.identity_service.enums.Role;
+import com.phuocngo.identity_service.repository.RoleRepository;
 import com.phuocngo.identity_service.repository.UserRepository;
 import java.util.HashSet;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +17,9 @@ public class ApplicationInitConfig {
 
   @Bean
   ApplicationRunner applicationRunner(
-      UserRepository userRepository, PasswordEncoder passwordEncoder) {
+      UserRepository userRepository,
+      PasswordEncoder passwordEncoder,
+      RoleRepository roleRepository) {
 
     return args -> {
       if (userRepository.findByUsername("admin").isPresent()) {
@@ -26,9 +29,16 @@ public class ApplicationInitConfig {
       var roles = new HashSet<String>();
       roles.add(Role.ADMIN.getName());
 
+      var rolesExisted = roleRepository.findAllById(roles);
+
       String password = passwordEncoder.encode("admin");
 
-      User u = User.builder().roles(roles).username("admin").password(password).build();
+      User u =
+          User.builder()
+              .roles(new HashSet<>(rolesExisted))
+              .username("admin")
+              .password(password)
+              .build();
 
       userRepository.save(u);
 
