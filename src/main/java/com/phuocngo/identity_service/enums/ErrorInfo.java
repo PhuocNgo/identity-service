@@ -8,13 +8,16 @@ import org.springframework.http.HttpStatusCode;
 public enum ErrorInfo {
   UNCATEGORIZED_ERROR(9999, "Uncategorized error.", HttpStatus.INTERNAL_SERVER_ERROR),
   USER_EXISTED(1001, "User has been existed.", HttpStatus.CONFLICT),
-  INVALID_USERNAME(1002, "Your username must be at least 3 characters.", HttpStatus.BAD_REQUEST),
-  INVALID_PASSWORD(1003, "Your password must be at least 8 characters.", HttpStatus.BAD_REQUEST),
+  INVALID_USERNAME(
+      1002, "Your username must be at least {min} characters.", HttpStatus.BAD_REQUEST),
+  INVALID_PASSWORD(
+      1003, "Your password must be at least {min} characters.", HttpStatus.BAD_REQUEST),
   USER_NOT_EXISTED(1004, "Username has not been existed.", HttpStatus.NOT_FOUND),
   UNAUTHENTICATED(1005, "Unauthenticated", HttpStatus.UNAUTHORIZED),
   INVALID_TOKEN(1006, "Your token is invalid.", HttpStatus.BAD_REQUEST),
   UNAUTHORIZED(1007, "You have no permission", HttpStatus.FORBIDDEN),
-  UNSUCCESSFUL_LOGIN(1008, "Your username or password is incorrect.", HttpStatus.UNAUTHORIZED);
+  UNSUCCESSFUL_LOGIN(1008, "Your username or password is incorrect.", HttpStatus.UNAUTHORIZED),
+  INVALID_DOB(1009, "Your age must be above {min}", HttpStatus.BAD_REQUEST);
   private final int code;
   private final String message;
   private final HttpStatusCode statusCode;

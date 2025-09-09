@@ -2,6 +2,9 @@ package com.phuocngo.identity_service.exception;
 
 import com.phuocngo.identity_service.dto.response.ApiResponse;
 import com.phuocngo.identity_service.enums.ErrorInfo;
+import jakarta.validation.ConstraintViolation;
+import java.util.Map;
+import java.util.Objects;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -20,6 +23,16 @@ public class GlobalHandleException {
             .message(e.getMessage())
             .build();
     return ResponseEntity.status(ErrorInfo.UNCATEGORIZED_ERROR.getStatusCode()).body(apiResponse);
+  }
+
+  @ExceptionHandler(IllegalArgumentException.class)
+  public ResponseEntity<ApiResponse<?>> handleException(IllegalArgumentException e) {
+    return ResponseEntity.status(ErrorInfo.UNCATEGORIZED_ERROR.getStatusCode())
+        .body(
+            ApiResponse.builder()
+                .code(ErrorInfo.UNCATEGORIZED_ERROR.getCode())
+                .message(e.getMessage())
+                .build());
   }
 
   @ExceptionHandler(RuntimeException.class)
@@ -42,10 +55,21 @@ public class GlobalHandleException {
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public ResponseEntity<ApiResponse<?>> handleValidateException(
       MethodArgumentNotValidException methodArgumentNotValidException) {
-    ErrorInfo errorInfo =
-        ErrorInfo.valueOf(methodArgumentNotValidException.getFieldError().getDefaultMessage());
+    String errorInfoKey =
+        Objects.requireNonNull(methodArgumentNotValidException.getFieldError()).getDefaultMessage();
+    ErrorInfo errorInfo = ErrorInfo.valueOf(errorInfoKey);
+
+    var constraintViolation =
+        methodArgumentNotValidException
+            .getBindingResult()
+            .getAllErrors()
+            .getFirst()
+            .unwrap(ConstraintViolation.class);
+    var attributes = constraintViolation.getConstraintDescriptor().getAttributes();
+    String newMessage = mappingAttributes(attributes, errorInfo.getMessage());
+
     ApiResponse<?> apiResponse =
-        ApiResponse.builder().message(errorInfo.getMessage()).code(errorInfo.getCode()).build();
+        ApiResponse.builder().message(newMessage).code(errorInfo.getCode()).build();
 
     return ResponseEntity.badRequest().body(apiResponse);
   }
@@ -59,5 +83,11 @@ public class GlobalHandleException {
             .code(ErrorInfo.UNAUTHORIZED.getCode())
             .build();
     return ResponseEntity.status(ErrorInfo.UNAUTHORIZED.getStatusCode()).body(apiResponse);
+  }
+
+  private String mappingAttributes(Map<String, Object> attributes, String message) {
+    String min = "min";
+    var attributeVal = String.valueOf(attributes.get(min));
+    return message.replace("{" + min + "}", attributeVal);
   }
 }

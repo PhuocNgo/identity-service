@@ -1,5 +1,6 @@
 package com.phuocngo.identity_service.dto.request;
 
+import com.phuocngo.identity_service.validator.DobConstraint;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 import lombok.AccessLevel;
@@ -18,5 +19,7 @@ public class UserCreation {
   String password;
 
   String fullName;
+
+  @DobConstraint(min = 30, message = "INVALID_DOB")
   LocalDate dob;
 }
