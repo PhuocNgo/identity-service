@@ -30,6 +30,12 @@ public class AuthController {
     return ResponseEntity.accepted().body(apiResponse);
   }
 
+  @PostMapping("/log-out")
+  public ResponseEntity<ApiResponse<Void>> logOut(@RequestBody TokenRequest token) {
+    authService.logOut(token.token());
+    return ResponseEntity.ok().body(ApiResponse.<Void>builder().message("Logged Out.").build());
+  }
+
   @PostMapping("/verify-token")
   public ResponseEntity<ApiResponse<AuthResponse>> verifyToken(@RequestBody TokenRequest token) {
     return ResponseEntity.ok()
